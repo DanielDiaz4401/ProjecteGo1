@@ -1,7 +1,7 @@
-// Package domini controla el
+// Package temps controla el
 //moment en el que es va
 //crear l'entrada
-package domini
+package temps
 
 import (
 	"strings"
