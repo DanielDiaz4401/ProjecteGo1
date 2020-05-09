@@ -8,12 +8,6 @@ import (
 	"time"
 )
 
-// Algo es algo
-type Algo interface {
-	Get() string
-	ComparaTemps(o Temps) int
-}
-
 // Temps esta expressat
 // en hores (hh:mm:dd)
 // i en dia (aaaa-mm-dd)
@@ -28,15 +22,16 @@ type Temps struct {
 //  -Posar només el dia
 //  -No posar res i asignar el
 //	dia actual.
-func New(data []string) Temps {
-	switch len(data) {
-	case 0:
+func New(data string) Temps {
+	if len(data) == 0 {
 		return ara()
-	case 1:
-		return Temps{dia: data[0]}
-	default:
-		return Temps{data[0], data[1]}
 	}
+	aux := strings.Split(data, " ")
+	if len(aux) == 1 {
+		return Temps{dia: aux[0]}
+	}
+
+	return Temps{aux[0], aux[1]}
 }
 
 // ara retorna el temps actual en
@@ -52,16 +47,16 @@ func ara() Temps {
 
 // Get retorna un string del temps amb
 // format aaaa-dd-mm hh:mm:ss
-func (t *Temps) Get() string {
+func (t Temps) Get() string {
 	return t.dia + " " + t.hora
 }
 
-func (t *Temps) comparaDia(o Temps) int {
+func (t Temps) comparaDia(o Temps) int {
 	return strings.Compare(t.dia, o.dia)
 }
 
 // ComparaTemps compara els temps
-func (t *Temps) ComparaTemps(o Temps) int {
+func (t Temps) ComparaTemps(o Temps) int {
 	dia := t.comparaDia(o)
 	if dia == 0 {
 		return strings.Compare(t.hora, o.hora)
