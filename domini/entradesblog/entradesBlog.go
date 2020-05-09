@@ -130,8 +130,8 @@ func (e *EntradesBlog) Ordena() {
 // si el string no correspon amb cap opció
 func (e *EntradesBlog) SetCriteri(crit string) error {
 	switch crit {
-	case "tit":
-		criteri = "tit"
+	case "titol":
+		criteri = "titol"
 		return nil
 	case "num":
 		criteri = "num"
@@ -149,7 +149,7 @@ func (e *EntradesBlog) SetCriteri(crit string) error {
 func (e *EntradesBlog) ToString() string {
 	aux := "Totes{\n"
 	for _, entrada := range e.entrades {
-		aux += "\t" + strconv.Itoa(int(entrada.GetID())) + " " + entrada.GetTitol() + entrada.GetQuan().Get() + "\n"
+		aux += "\t" + strconv.Itoa(int(entrada.GetID())) + " " + entrada.GetTitol() + " " + entrada.GetQuan().Get() + "\n"
 	}
 	return aux + "}"
 }

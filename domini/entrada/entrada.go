@@ -59,5 +59,5 @@ func Compare(una, altra Entrada, criteri string) int {
 // ToString retorna un string en el format
 // "id titol text dia hora"
 func (e Entrada) ToString() string {
-	return string(e.id) + e.titol + e.text + e.data.Get()
+	return string(e.id) + " " + e.titol + " " + e.text + " " + e.data.Get()
 }
