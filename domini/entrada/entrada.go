@@ -13,13 +13,13 @@ import (
 // Una Entrada té un id, un titol, un text,
 // i el dia i hora en que s'ha creat.
 type Entrada struct {
-	id    uint
+	id    int
 	titol string
 	text  string
 	data  temps.Temps
 }
 
-var nEntrades uint
+var nEntrades int = 0
 
 // New crea una entrada amb el titol, el text,
 // i el dia i hora indicats i incrementa en
@@ -30,7 +30,7 @@ func New(titol, text, data string) Entrada {
 }
 
 // GetID retorna la ID de l'entrada
-func (e Entrada) GetID() uint {
+func (e Entrada) GetID() int {
 	return e.id
 }
 
@@ -51,7 +51,7 @@ func Compare(una, altra Entrada, criteri string) int {
 		return strings.Compare(una.titol, altra.titol)
 	}
 	if criteri == "num" {
-		return int(una.id - altra.id)
+		return una.id - altra.id
 	}
 	return 0
 }

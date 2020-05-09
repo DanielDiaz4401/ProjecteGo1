@@ -4,15 +4,26 @@
 // ordre segons el criteri
 package entradesblog
 
-import(
+import (
+	"errors"
+	"strconv"
+
 	"github.com/DanielDiaz4401/ProjecteGo1/domini/entrada"
+	"github.com/DanielDiaz4401/ProjecteGo1/domini/temps"
 )
 
-// Llista d'entrades de l'usuari
+// Entrada és un alies d'entrada
+// per poder manipular les entrades
+// en els métodes que ho requereixin
+type Entrada = entrada.Entrada
+
+// EntradesBlog es d'entrades
+// de l'usuari
 type EntradesBlog []Entrada
 
 var criteri string
 
+// New crea una llista buida d'entrades
 func New() EntradesBlog {
 	return []Entrada{}
 }
@@ -20,24 +31,30 @@ func New() EntradesBlog {
 // Agafa l'entrada amb id==num i,
 // si existeix, la retorna.
 func (e *EntradesBlog) Agafa(num int) Entrada {
-	for _,var := range e {
-		if var.GetID()==num {
-			return var
+	for _, entrada := range *e {
+		if entrada.GetID() == num {
+			return entrada
 		}
 	}
-	return nil
+	return Entrada{}
 }
 
-// Elimina l'entrada amb id==num i,
-// si existeix, la retorna
-func (e *EntradesBlog) Elimina(num int) Entrada {
-	for i, var := range e {
-		if var.GetID()==num {
-			remove(e,i)
-			return var
+// Elimina l'entrada amb id==num.
+// Si existeix, la retorna.
+// Si no existeix, retorna err
+func (e *EntradesBlog) Elimina(num int) (Entrada, error) {
+	for i, entrada := range *e {
+		if entrada.GetID() == num {
+			*e = remove(*e, i)
+			return entrada, nil
 		}
 	}
-	return nil
+	return Entrada{}, errors.New("No existeix l'entrada")
+}
+
+// Ejemplo de polimorfismo en go
+func remove(slice []Entrada, s int) []Entrada {
+	return append(slice[:s], slice[s+1:]...)
 }
 
 // EntreDates retorna un string amb les
@@ -45,12 +62,16 @@ func (e *EntradesBlog) Elimina(num int) Entrada {
 // "Dates{
 //		entrada
 // }"
-func (e *EntradesBlog) EntreDates(inici,fi temps.Temps) string{
+func (e *EntradesBlog) EntreDates(inici, fi temps.Temps) string {
 	aux := "Dates{\n"
-	for _, var := range e {
-		aux +="\t" var.GetID()+" "+var.GetTitol+"\n" 
+	for _, entrada := range *e {
+		if entrada.GetQuan().ComparaTemps(inici) > 0 {
+			if entrada.GetQuan().ComparaTemps(fi) < 0 {
+				aux += "\t" + strconv.Itoa(int(entrada.GetID())) + " " + entrada.GetTitol() + "\n"
+			}
+		}
 	}
-	return aux+"}"
+	return aux + "}"
 }
 
 // Index retorna un string amb les
@@ -58,12 +79,12 @@ func (e *EntradesBlog) EntreDates(inici,fi temps.Temps) string{
 // "Index{
 //		id titol
 // }"
-func (e *EntradesBlog) Index() string{
+func (e *EntradesBlog) Index() string {
 	aux := "Index{\n"
-	for _, var := range e {
-		aux +="\t" var.GetID()+" "+var.GetTitol+"\n" 
+	for _, entrada := range *e {
+		aux += "\t" + strconv.Itoa(int(entrada.GetID())) + " " + entrada.GetTitol() + "\n"
 	}
-	return aux+"}"
+	return aux + "}"
 }
 
 // ToString retorna un string amb les
@@ -71,11 +92,10 @@ func (e *EntradesBlog) Index() string{
 // "Totes{
 //		entrada
 // }"
-func (e *EntradesBlog) ToString() string{
-	var aux string
+func (e *EntradesBlog) ToString() string {
 	aux := "Totes{\n"
-	for _, var := range e {
-		aux += var.GetID()+" "+var.GetTitol()+var.GetQuan()"\n" 
+	for _, entrada := range *e {
+		aux += "\t" + strconv.Itoa(int(entrada.GetID())) + " " + entrada.GetTitol() + entrada.GetQuan().Get() + "\n"
 	}
-	return aux+"}"
+	return aux + "}"
 }
