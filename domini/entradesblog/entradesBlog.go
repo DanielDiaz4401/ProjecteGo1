@@ -28,15 +28,16 @@ func New() EntradesBlog {
 	return []Entrada{}
 }
 
-// Agafa l'entrada amb id==num i,
-// si existeix, la retorna.
-func (e *EntradesBlog) Agafa(num int) Entrada {
+// Agafa l'entrada amb id==num.
+// Si existeix, la retorna.
+// Si no existeix, retorna err
+func (e *EntradesBlog) Agafa(num int) (Entrada, error) {
 	for _, entrada := range *e {
 		if entrada.GetID() == num {
-			return entrada
+			return entrada, nil
 		}
 	}
-	return Entrada{}
+	return Entrada{}, errors.New("No existeix l'entrada")
 }
 
 // Elimina l'entrada amb id==num.
