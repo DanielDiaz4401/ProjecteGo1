@@ -110,6 +110,37 @@ func (e *EntradesBlog) Index() string {
 	return aux + "}"
 }
 
+// Ordena les entrades segons el criteri especificat
+func (e *EntradesBlog) Ordena() {
+	for i := 0; i < len(e.entrades)-1; i++ {
+		if entrada.Compare(e.entrades[i], e.entrades[i+1], criteri) > 0 {
+			for j := i; j > 0; j-- {
+				if entrada.Compare(e.entrades[i], e.entrades[i+1], criteri) > 0 {
+					aux := e.entrades[j]
+					e.entrades[j] = e.entrades[j+1]
+					e.entrades[j+1] = aux
+				}
+			}
+		}
+	}
+}
+
+// SetCriteri estableix el criteri per ordenar
+// en "tit" (titol) o "num" (id). Retorna error
+// si el string no correspon amb cap opció
+func (e *EntradesBlog) SetCriteri(crit string) error {
+	switch crit {
+	case "tit":
+		criteri = "tit"
+		return nil
+	case "num":
+		criteri = "num"
+		return nil
+	default:
+		return errors.New("Error al establir el criteri")
+	}
+}
+
 // ToString retorna un string amb les
 // entrades ordenades.
 // "Totes{
