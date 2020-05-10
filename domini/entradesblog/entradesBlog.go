@@ -6,6 +6,7 @@ package entradesblog
 
 import (
 	"errors"
+	"sort"
 	"strconv"
 
 	"github.com/DanielDiaz4401/ProjecteGo1/domini/entrada"
@@ -35,9 +36,9 @@ func New() EntradesBlog {
 // segons el criteri actual.
 func (e *EntradesBlog) AfegeixOrdenat(in entrada.Entrada) {
 	for i, aux := range e.entrades {
-		if i < len(e.entrades)-1 {
+		if i < len(e.entrades) {
 			if entrada.Compare(in, aux, criteri) < 0 {
-				e.entrades = remove(e.entrades, i)
+				e.entrades = add(e.entrades, i, in)
 				return
 			}
 		}
@@ -46,8 +47,10 @@ func (e *EntradesBlog) AfegeixOrdenat(in entrada.Entrada) {
 }
 
 func add(slice []entrada.Entrada, i int, afegir entrada.Entrada) []entrada.Entrada {
-	aux := append(slice[:i], afegir)
-	return append(aux, slice[i+1:]...)
+	slice = append(slice, afegir) // Augmento la capacitat ce slice
+	copy(slice[i+1:], slice[i:])  // Copio el que hi ha a i una posició a la dreta
+	slice[i] = afegir             // Ara que tinc un lloc lliure, afegeixo en aquesta posicio l'entrada
+	return slice
 }
 
 // Agafa l'entrada amb id==num.
@@ -84,7 +87,7 @@ func remove(slice []entrada.Entrada, i int) []entrada.Entrada {
 // compreses entre les dues dates.
 // "Dates{
 //		entrada
-// }"
+// }"find . -name '*.php' | xargs wc -l
 func (e *EntradesBlog) EntreDates(inici, fi temps.Temps) string {
 	aux := "Dates{\n"
 	for _, entrada := range e.entrades {
@@ -110,18 +113,16 @@ func (e *EntradesBlog) Index() string {
 	return aux + "}"
 }
 
-// Ordena les entrades segons el criteri especificat
+// Ordena les entrades segons el criteri especificatfind . -name '*.php' | xargs wc -lfind . -name '*.php' | xargs wc -lfind . -name '*.php' | xargs wc -lfind . -name '*.php' | xargs wc -lfind . -name '*.php' | xargs wc -l
 func (e *EntradesBlog) Ordena() {
-	for i := 0; i < len(e.entrades)-1; i++ {
-		if entrada.Compare(e.entrades[i], e.entrades[i+1], criteri) > 0 {
-			for j := i; j > 0; j-- {
-				if entrada.Compare(e.entrades[i], e.entrades[i+1], criteri) > 0 {
-					aux := e.entrades[j]
-					e.entrades[j] = e.entrades[j+1]
-					e.entrades[j+1] = aux
-				}
-			}
-		}
+	if criteri == "num" {
+		sort.Slice(e.entrades, func(i, j int) bool {
+			return e.entrades[i].GetID() < e.entrades[j].GetID()
+		})
+	} else {
+		sort.Slice(e.entrades, func(i, j int) bool {
+			return e.entrades[i].GetTitol() < e.entrades[j].GetTitol()
+		})
 	}
 }
 
