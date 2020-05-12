@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/DanielDiaz4401/ProjecteGo1/interficieusuari"
+	"github.com/DanielDiaz4401/ProjecteGo1/iu/interficieusuari"
 )
 
 func main() {

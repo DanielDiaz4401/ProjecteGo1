@@ -6,6 +6,7 @@ package controlador
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -13,12 +14,15 @@ import (
 	"github.com/DanielDiaz4401/ProjecteGo1/domini/entrada"
 	"github.com/DanielDiaz4401/ProjecteGo1/domini/entradesblog"
 	"github.com/DanielDiaz4401/ProjecteGo1/domini/temps"
+	"github.com/DanielDiaz4401/ProjecteGo1/domini/usuariregistrat"
 )
 
 //Controlador controla el blog
 type Controlador struct {
 	entrades entradesblog.EntradesBlog
 }
+
+var registrats map[string]usuariregistrat.UsuariRegistrat
 
 // New crea un nou controlador
 func New() Controlador {
@@ -67,6 +71,12 @@ func (c *Controlador) MostraEntrades() {
 	fmt.Println(c.entrades.ToString())
 }
 
+func (c *Controlador) MostraUsuaris() {
+	for user := range registrats {
+		fmt.Println(user)
+	}
+}
+
 //NovaEntrada Demana el titol, el text, i el
 // dia i hora a l'usuari, crea una entrada nova,
 // i l'afegeix al blog en la posició que li
@@ -100,4 +110,38 @@ func (c *Controlador) Ordena() {
 		return
 	}
 	c.entrades.Ordena()
+}
+
+func (c *Controlador) Sessio() error {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Nom d'usuari:")
+	nom, _ := reader.ReadString('\n')
+	nom = strings.ReplaceAll(nom, "\n", "")
+	fmt.Println("Contrasenya:")
+	cont1, _ := reader.ReadString('\n')
+	cont1 = strings.ReplaceAll(cont1, "\n", "")
+	fmt.Println("Repetir contrasenya:")
+	cont2, _ := reader.ReadString('\n')
+	cont2 = strings.ReplaceAll(cont2, "\n", "")
+	if cont1 != cont2 {
+		return errors.New("Contrasenya incorrecta")
+	}
+	registrats = append(registrats, usuariregistrat.New(New(), nom, cont1))
+	return nil
+}
+
+func (c *Controlador) sessio() error {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Nom d'usuari:")
+	nom, _ := reader.ReadString('\n')
+	nom = strings.ReplaceAll(nom, "\n", "")
+	fmt.Println("Contrasenya:")
+	cont, _ := reader.ReadString('\n')
+	cont = strings.ReplaceAll(cont, "\n", "")
+	user, ok := registrats[nom]
+	if !ok || user.VerificaPassword(cont) {
+		return errors.New("Nom d'usuari o contrasenya incorrecte!")
+	}
+	user.GetMenu().Cicle()
+	return nil
 }
