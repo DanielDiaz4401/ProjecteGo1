@@ -126,7 +126,7 @@ func (c *Controlador) Sessio() error {
 	if cont1 != cont2 {
 		return errors.New("Contrasenya incorrecta")
 	}
-	registrats = append(registrats, usuariregistrat.New(New(), nom, cont1))
+	registrats[nom] = usuariregistrat.New(New(), nom, cont1)
 	return nil
 }
 
@@ -143,5 +143,14 @@ func (c *Controlador) sessio() error {
 		return errors.New("Nom d'usuari o contrasenya incorrecte!")
 	}
 	user.GetMenu().Cicle()
+	return nil
+}
+
+func (c *Controlador) MostraBlog(nom string) error {
+	usuari := registrats[nom]
+	if usuari == nil {
+		return errors.New("Error al accedir a l'usuari")
+	}
+	usuari.MostraEntrades
 	return nil
 }
